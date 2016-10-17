@@ -1,13 +1,6 @@
 #ifndef	_controlFun
 #define _controlFun
 
-#define THROTTLE vexRT[Ch3]
-#define TURN vexRT[Ch1]
-#define CLAWCLOSE vexRT[Btn8D]
-#define CLAWOPEN vexRT[Btn8R]
-#define TOSS vexRT[Btn6U]
-#define ANTITOSS vexRT[Btn6D]
-
 void tossObject(){ //control for launcher. Currently no feedback, so time limit implimented to stop motors from breaking.
 
 	if(TOSS){
