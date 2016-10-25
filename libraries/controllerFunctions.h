@@ -1,68 +1,45 @@
 #ifndef	_controlFun
 #define _controlFun
 
-void tossObject(){ //control for launcher. Currently no feedback, so time limit implimented to stop motors from breaking.
+#include "TossFunctions.h"
+#include "macroDefines.h"
 
-	if(TOSS){
+void tossHandler(){ //control for launcher. Currently no feedback, so time limit implimented to stop motors from breaking.
 
-		setMotor(Launcher1, 100);
-		setMotor(Launcher2, 100);
-		setMotor(Launcher3, 100);
-		setMotor(Launcher4, 100);
-		setMotor(Launcher5, 100);
-		setMotor(Launcher6, 100);
-
-		delay(100);
-
-		setMotor(Launcher1, 0);
-		setMotor(Launcher2, 0);
-		setMotor(Launcher3, 0);
-		setMotor(Launcher4, 0);
-		setMotor(Launcher5, 0);
-		setMotor(Launcher6, 0);
+	if(HIGHTOSS){
+	highToss();
 	}
 
-	else if(ANTITOSS)
+	else if(FARTOSS)
 	{
-		setMotor(Launcher1, -100);
-		setMotor(Launcher2, -100);
-		setMotor(Launcher3, -100);
-		setMotor(Launcher4, -100);
-		setMotor(Launcher5, -100);
-		setMotor(Launcher6, -100);
+		farToss();
+	}
 
-		delay(100);
-
-		setMotor(Launcher1, 0);
-		setMotor(Launcher2, 0);
-		setMotor(Launcher3, 0);
-		setMotor(Launcher4, 0);
-		setMotor(Launcher5, 0);
-		setMotor(Launcher6, 0);
+	else
+	{
+	 	activateArm(-1);
 	}
 
 }
-void openClaws(){
+
+void clawHandler(){
 
 	if(CLAWCLOSE)
 	{
-		SensorValue[claw1] = 1;  //Activate both solenoids at the same time.
-		SensorValue[claw2] = 1;
+	closeClaws();
 	}
-}
 
-void closeClaws(){
-	if(CLAWOPEN)
+	else	if(CLAWOPEN)
 	{
-		SensorValue[claw1] = 0;  //Activate both solenoids at the same time.
-		SensorValue[claw2] = 0;
+		openClaws();
 	}
+
+
 }
 
 void drive(){  //Handles Joystick -> movement\translation
 
 	const int deadZoneBuffer = 27; //remove edge of analog joystick to make less sensitive. Also, makes signed bit max value 100 instead of 127.
-
 	const int invert = -1;
 	const int completeStop = 0;
 
@@ -107,10 +84,9 @@ void drive(){  //Handles Joystick -> movement\translation
 }
 
 void controllerHandeler(){
-	openClaws();
-	closeClaws();
+	clawHandler();
 	drive();
-	tossObject();
+	tossHandler();
 }
 
 #endif
