@@ -42,6 +42,7 @@ void openClaws(){
 			SensorValue[claw1] = 1;  //Activate both solenoids at the same time.
 			SensorValue[claw2] = 1;
 }
+
 void closeClaws(){
 			SensorValue[claw1] = 0;  //Activate both solenoids at the same time.
 			SensorValue[claw2] = 0;
@@ -49,21 +50,21 @@ void closeClaws(){
 
 void activateArm(int inverter){
 
-		int invert;
+		int MUL;
 
 		if(inverter == true){
-			invert = 1;
+			MUL = 1;
 			}
 
 		else if(inverter == false){
-			invert = -1;
+			MUL = -1;
 			}
 
 		else{
-		invert = 0;
+		MUL = 0;
 		}
 
-		int motorSpeed = 100*invert;
+		int motorSpeed = 100*MUL;
 
 		setMotor(LauncherL1, motorSpeed);
 		setMotor(LauncherL2, motorSpeed);
@@ -73,31 +74,45 @@ void activateArm(int inverter){
 		setMotor(LauncherR6, motorSpeed);
 }
 
-void highToss(){
-		while(ARMVALUE <= ARMHIGHTHROW)
-		{
-			activateArm(1);
-		}
-			if(ARMVALUE >= ARMHIGHTHROW)
-			{
-				openClaws();
-				activateArm(-1);
-				resetArm();
-			}
+void tossObject(float releaseAngle){
 
-}
+		releaseAngle /= 0.045; // convert angle to sensor value
 
-void farToss(){
-			while(ARMVALUE <= ARMFARTHROW)
-		{
-			activateArm(1);
-		}
+    const int delayTime = 150;
+    const int timesTillQuit = 3; //How many times this thing can be bad at it's job.
 
-		if(ARMVALUE >= ARMFARTHROW)
-			{
-				openClaws();
-				activateArm(-1);
-				resetArm();
-			}
+    bool loopFlag = true;
+
+    int armCount = 0;       //read how many times arm has not been doing its job
+    int armPos[2] = {0,0};  //stores arms to find difference
+
+    while(loopFlag)
+    {
+        armPos[0] = ARMVALUE; //read initial value
+
+        activateArm(1);       //activate arm
+
+        delay(delayTime);     //wait for next sample
+
+        armPos[1] = ARMVALUE;  // read next sample into array
+
+        if(armPos[0] == armPos[1] || armPos[0] <= armPos[1]){ // see if arm positions are equal or decreasing. Not good.
+            armCount++;
+        }
+
+        if(armCount >= timesTillQuit || ARMVALUE >= releaseAngle){
+            loopFlag = false; //Break the loop.
+        }
+    }
+
+    if(ARMVALUE >= releaseAngle)
+    {
+        openClaws();      //release object
+        activateArm(-1);  //disable arm motors
+        resetArm();       //Go to resting position
+    }
+    else{
+        resetArm();
+    }
 }
 #endif

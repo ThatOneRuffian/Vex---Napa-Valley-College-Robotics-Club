@@ -2,7 +2,8 @@
 #pragma config(Sensor, dgtl1,  claw1,          sensorDigitalOut)
 #pragma config(Sensor, dgtl2,  claw2,          sensorDigitalOut)
 #pragma config(Sensor, dgtl3,  armLocker,      sensorDigitalOut)
-#pragma config(Sensor, dgtl4,  ultraSonic,     sensorSONAR_mm)
+#pragma config(Sensor, dgtl4,  rightEncoder,   sensorQuadEncoder)
+#pragma config(Sensor, dgtl6,  leftEncoder,    sensorQuadEncoder)
 #pragma config(Motor,  port1,           LauncherL1,    tmotorVex393_HBridge, openLoop)
 #pragma config(Motor,  port2,           MotorLeft1,    tmotorVex393_MC29, openLoop)
 #pragma config(Motor,  port3,           MotorLeft2,    tmotorVex393_MC29, openLoop)
@@ -20,9 +21,10 @@
 task main()
 {
 	//intScreen();
-
+	int myValue;
 	while(true)
 	{
+		myValue = SensorValue[rightEncoder];
 		controllerHandeler();
 	}
 }

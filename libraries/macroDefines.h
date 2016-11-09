@@ -8,20 +8,19 @@
 #define CLAWOPEN    vexRT[Btn8R]
 #define HIGHTOSS    vexRT[Btn6U]
 #define FARTOSS     vexRT[Btn6D]
+#define debug1				vexRT[Btn7U]
+#define debug2				vexRT[Btn7D]
 //*************Controller Macros - End*****************//
 
 //*************Ultra Sonic Sensor Macros - Start*****************//
 #define FRONTDISTANCE SensorValue(ultraSonic)
 //*************Ultra Sonic Sensor Macros - End*****************//
 
-
 //*************Toss - start*****************//
 #define ARMVALUE 		  SensorValue(armPot)
-#define ARMMAX  		  1837
-#define ARMFARTHROW   1000
-#define ARMHIGHTHROW  750
+#define ARMMAX  		  2000 //~90 degrees
 
-#define RESTING 			0
+#define RESTING 				0
 
 //*************Toss - end*****************//
 

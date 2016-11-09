@@ -7,12 +7,12 @@
 void tossHandler(){ //control for launcher. Currently no feedback, so time limit implimented to stop motors from breaking.
 
 	if(HIGHTOSS){
-	highToss();
+	tossObject(33);
 	}
 
 	else if(FARTOSS)
 	{
-		farToss();
+		tossObject(38);
 	}
 
 	else
@@ -24,16 +24,28 @@ void tossHandler(){ //control for launcher. Currently no feedback, so time limit
 
 void clawHandler(){
 
+
 	if(CLAWCLOSE)
 	{
 	closeClaws();
 	}
 
-	else	if(CLAWOPEN)
+	else if(debug1){
+
+	SensorValue[armLocker] = 1;
+
+}
+
+	else if(debug2){
+
+	SensorValue[armLocker] = 0;
+
+}
+
+	else if(CLAWOPEN)
 	{
 		openClaws();
 	}
-
 
 }
 
