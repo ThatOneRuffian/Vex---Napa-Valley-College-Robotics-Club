@@ -14,19 +14,11 @@
 
 
 //*************Ultra Sonic Sensor Macros - Start*****************//
-#define FRONTDISTANCE SensorValue(ultraSonic)
+#define FRONTDISTANCE SensorValue[ultraSonic]
 //*************Ultra Sonic Sensor Macros - End*****************//
-
-
-//*************Encoder Sensor Macros - Start*****************//
-#define LEFTPOS			SensorValue[leftEncoder]
-#define RIGHTPOS			SensorValue[rightEncoder]
-//*************Encoder Sonic Sensor Macros - End*****************//
-
 
 //*************Toss - start*****************//
 #define ARMVALUE 		  SensorValue(armPot)
-#define ARMMAX  		  2000 //~90 degrees
 #define RESTING 				0
 //*************Toss - end*****************//
 

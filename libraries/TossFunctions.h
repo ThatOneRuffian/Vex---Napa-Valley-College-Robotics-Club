@@ -1,10 +1,19 @@
 #ifndef	_Toss
 #define _Toss
+
 #include "macroDefines.h"
 
-bool tossBusy = false;
+void lockArm(){
 
-void activateArm(int inverter);
+	SensorValue[armLocker] = 1;
+}
+
+void unlockArm(){
+
+ SensorValue[armLocker] = 0;
+}
+
+void activateArm(int DIR);
 
 void resetArm(){
 
@@ -34,7 +43,6 @@ void resetArm(){
 			delay(motorPluseTime);
 			activateArm(-1);
 		}
-
 	}
 }
 
@@ -48,15 +56,15 @@ void closeClaws(){
 			SensorValue[claw2] = 0;
 }
 
-void activateArm(int inverter){
+void activateArm(int DIR){
 
 		int MUL;
 
-		if(inverter == true){
+		if(DIR == true){
 			MUL = 1;
 			}
 
-		else if(inverter == false){
+		else if(DIR == false){
 			MUL = -1;
 			}
 
@@ -78,8 +86,8 @@ void tossObject(float releaseAngle){
 
 		releaseAngle /= 0.045; // convert angle to sensor value
 
-    const int delayTime = 150;
-    const int timesTillQuit = 3; //How many times this thing can be bad at it's job.
+    const int delayTime = 200;
+    const int timesTillQuit = 4; //How many times this thing can be bad at it's job.
 
     bool loopFlag = true;
 
@@ -96,7 +104,7 @@ void tossObject(float releaseAngle){
 
         armPos[1] = ARMVALUE;  // read next sample into array
 
-        if(armPos[0] == armPos[1] || armPos[0] <= armPos[1]){ // see if arm positions are equal or decreasing. Not good.
+        if(armPos[0] == armPos[1] || armPos[1] <= armPos[0]){ // see if arm positions are equal or decreasing. Not good.
             armCount++;
         }
 
@@ -105,8 +113,7 @@ void tossObject(float releaseAngle){
         }
     }
 
-    if(ARMVALUE >= releaseAngle)
-    {
+    if(ARMVALUE >= releaseAngle){
         openClaws();      //release object
         activateArm(-1);  //disable arm motors
         resetArm();       //Go to resting position

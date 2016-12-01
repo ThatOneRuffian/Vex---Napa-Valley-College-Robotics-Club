@@ -2,7 +2,7 @@
 #define _controlFun
 
 #include "TossFunctions.h"
-#include "macroDefines.h"
+
 
 void tossHandler(){ //control for launcher. Currently no feedback, so time limit implimented to stop motors from breaking.
 
@@ -32,13 +32,13 @@ void clawHandler(){
 
 	else if(debug1){
 
-	SensorValue[armLocker] = 1;
+	lockArm();
 
 }
 
 	else if(debug2){
 
-	SensorValue[armLocker] = 0;
+	unlockArm();
 
 }
 

@@ -1,10 +1,9 @@
 #ifndef	_LCD
 #define _LCD
 
-
 #define lineWidth 16
 
-bool backLight = true;
+bool backLight = false;
 bool isPressed = false;
 bool rightAlt = false; //disable right input button
 
@@ -16,7 +15,7 @@ string myMenu[4][3] =
 	{{ "Mode",       "View Status",         "Settings"},
 	{"Auto",            "Battery1",         "LCD Light"},
 	{"Manual",         "Battery2",        "Controller Alt"},
-	{"empty", 			    "empty", 							"empty"}};
+	{"High Hang", 			    "empty", 				"Reset Sensors"}};
 
 void intScreen(){
 
@@ -28,8 +27,6 @@ void intScreen(){
 void updateInput(){
 
 	userInputs = 0;
-	const int maxCount = 2;
-	int counter = 0;
 
 	if( nLCDButtons != 0 && !isPressed){// Logic for input. Toggles pressed flag to stop screen looping.
 
@@ -53,19 +50,33 @@ displayLCDCenteredString (1,"Back Select --->");
 }
 void determineAction(){
 
+/*	{{ "Mode",       "View Status",         "Settings"},
+	{"Auto",            "Battery1",         "LCD Light"},
+	{"Manual",         "Battery2",        "Controller Alt"},
+	{"empty", 			    "empty", 							"empty"}};
+*/
+
 	if(menuChoice[0] == 1 && menuChoice[1] == 0){
 
 			menuChoice[0] = 0;
-				menuChoice[1] = 0;
-
+			menuChoice[1] = 0;
 	}
 
-	}
+	else if(menuChoice[0] == 1 && menuChoice[1] == 2){
+		if(	backLight){
+		bLCDBacklight = false;
+		backLight = false;
+		}
+		else{
+			bLCDBacklight = true;
+			backLight = true;
+			}
+		}
+
+}
+
 void menuHandler(){
 
-	/*menuChoice[][] //position in menu array
-	userInputs[3]
-	int menuChoice[2] = {0, 0};*/
 
 			if(menuChoice[0] != 0){
 
