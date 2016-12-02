@@ -26,17 +26,27 @@
 #include "lcdFunctions.h"
 #include "autoFunctions.h"
 #include "macroDefines.h"
+#include "modeLogic.h"
 
 task main()
 {
 	intScreen(); //setup screen
 	setupSensors(); // zero out sensors
 
-	while(Mode){ // auto mode
-	}
-	while(!Mode){ // manual mode
-		go2Line();
-		lcdHandler();
-		controllerHandeler();
+	while(true){
+
+		while(Mode == 0){ // manual mode
+
+			manualMode();
+		}
+
+		while(Mode == 1){ //Automatic mode
+
+			autoMode();
+		}
+		while(Mode == 2){ // high hang mode
+
+			highHangMode();
+		}
 	}
 }

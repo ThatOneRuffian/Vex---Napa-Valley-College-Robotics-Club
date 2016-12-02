@@ -1,9 +1,10 @@
 #ifndef	_LCD
 #define _LCD
 
-#define lineWidth 16
+//#define lineWidth 16    //not sure
+#include "autoFunctions.h"
 
-bool backLight = false;
+bool backLight = false;  //default backlight setting
 bool isPressed = false;
 bool rightAlt = false; //disable right input button
 
@@ -53,32 +54,46 @@ void determineAction(){
 /*	{{ "Mode",       "View Status",         "Settings"},
 	{"Auto",            "Battery1",         "LCD Light"},
 	{"Manual",         "Battery2",        "Controller Alt"},
-	{"empty", 			    "empty", 							"empty"}};
+	{"Hang", 			    "empty", 							"empty"}};
 */
 
-	if(menuChoice[0] == 1 && menuChoice[1] == 0){
+	if(menuChoice[0] == 1 && menuChoice[1] == 0){ // Auto selected
 
-			menuChoice[0] = 0;
-			menuChoice[1] = 0;
+		Mode = 1;
 	}
 
-	else if(menuChoice[0] == 1 && menuChoice[1] == 2){
+	if(menuChoice[0] == 1 && menuChoice[1] == 2){   //LCD light selected
+
 		if(	backLight){
+
 		bLCDBacklight = false;
-		backLight = false;
+
 		}
+
 		else{
+
 			bLCDBacklight = true;
-			backLight = true;
+
 			}
 		}
+
+	if(menuChoice[0] == 1 && menuChoice[1] == 1){	//Manual mode selected
+
+		Mode = 0;
+	}
+
+	if(menuChoice[0] == 1 && menuChoice[1] == 2){	//High hang mode selected
+
+		Mode = 3;
+	}
+
 
 }
 
 void menuHandler(){
 
 
-			if(menuChoice[0] != 0){
+			if(menuChoice[0] != 0){ // if in the main menu.
 
 				rightAlt = true;
 			}
@@ -86,11 +101,10 @@ void menuHandler(){
 				rightAlt = false;
 			}
 
-		switch(userInputs){
+		switch(userInputs){  //monitor user input
 
 		case 1:
-				if(menuChoice[0] > 0)
-			{
+				if(menuChoice[0] > 0)	{
 				menuChoice[0] = 0;
 				menuChoice[1] = 0;
 			}

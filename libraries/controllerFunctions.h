@@ -2,7 +2,7 @@
 #define _controlFun
 
 #include "TossFunctions.h"
-
+#include "autoFunctions.h"
 
 void tossHandler(){ //control for launcher. Currently no feedback, so time limit implimented to stop motors from breaking.
 
@@ -46,6 +46,24 @@ void clawHandler(){
 	{
 		openClaws();
 	}
+
+	else if(HANG){
+
+		hangProceedure(45);
+	}
+
+	else if(LINE){
+
+		while(LINE){
+
+			go2Line();
+	}
+
+	}
+		else if(SCAN){
+		scanArea();
+	}
+
 
 }
 

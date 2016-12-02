@@ -7,9 +7,13 @@
 #define CLAWCLOSE   vexRT[Btn8D]
 #define CLAWOPEN    vexRT[Btn8R]
 #define HIGHTOSS    vexRT[Btn6U]
-#define FARTOSS     vexRT[Btn6D]
-#define debug1				vexRT[Btn7U]
-#define debug2				vexRT[Btn7D]
+#define FARTOSS  	   vexRT[Btn6D]
+#define debug1				vexRT[Btn7U]  //test arm lock
+#define debug2				vexRT[Btn7D]	// test arm lock ^
+#define HANG					vexRT[Btn7L]	//high hand strength test
+#define LINE					vexRT[Btn7R] 	//test for line movement
+#define SCAN					vexRT[Btn5U]  //scan for baddies
+
 //*************Controller Macros - End*****************//
 
 
@@ -19,7 +23,7 @@
 
 //*************Toss - start*****************//
 #define ARMVALUE 		  SensorValue(armPot)
-#define RESTING 				0
+#define RESTING 			0										//defined resting value for pot. shouldn't be implmented here. will fix later.
 //*************Toss - end*****************//
 
 #endif

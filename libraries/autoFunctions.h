@@ -22,13 +22,22 @@ const float gameObject[5] = { 0.0, 0.0, 0.0, 0.0, 0.0,}; // Pipe, Gate feet, cub
 const float disPerRotation = 329.7415649; //mm
 const float mmPerRotation = 1.0917640914004165933404290700629; // degree per mm
 const float sweetSpot = 254; // distance in mm for grabbing sweet spot
-const int maxClawCycles = 24; //max number of times the claw can be activated
+
+const int autoStepLength  = 500; // move vect step length
+
+const int maxClawCycles = 24; // max number of times the claw can be activated
+
+const int depthTrigger = 127; // how deep something must be to trigger an edge detection on the sonar sensor
+
+int parsedScanData[3][360]; //contains (theta1, theta2, radius, estimated object type)
+int rawSonarScan[360]; //contains full data from 360* scan
 int motorArray[2][2] = {{0, 0}, {0, false}}; // motorlogic {left | right}
+
 bool lockStatus = false;
-bool Mode = false;
+
+int Mode = 0;  //indicate manual | auto | high hang
 
 int threshold = 500; // Amount sensor has to change for the module to register
-
 
 int myAngle = 0; //angle offset from start
 
@@ -61,7 +70,6 @@ void go2Line(){//go forward until line is detected
 	updateSensors();
 }
 
-
 void lockHandeler(){
 
 	switch(lockStatus)
@@ -76,6 +84,7 @@ void lockHandeler(){
 		break;
 	}
 }
+
 void goDist(float myDist){
 
 	const int wheelStuckMax = 3;
@@ -233,7 +242,7 @@ void hangProceedure(float angle){
 
 void turnToGivenAngle(int myAngleReq){
 
-	const int angleBuffer = 10; //turn buffer
+	const int angleBuffer = 1; //turn buffer
 
 	myAngleReq = degreeToSensVar(myAngleReq); // convert angle to sensor value
 	updateSensors();
@@ -327,6 +336,43 @@ void updateSensors(){
 	potValue = SensorValue[armPot];
 	//myAngle = SensorValue[degree];
 }
+
+float getArclength(unsigned int radiusAvg, int angle1, int angle2){
+
+	const int circle = 360;
+	return (float)(2 * PI * radiusAvg * (( angle1 - angle2 )/circle )  ); //arclength formula
+}
+
+void parseData(){
+
+
+}
+
+void scanArea(){
+
+	updateSensors();
+
+	const int degreesInCircle = 360;
+	const int angleBuffer = 1;
+	const int pulseTime = 250; //time to pulse motor around circle
+	const int myAngleReq = myAngle + degreesInCircle;
+	int i = 0; //array indexer
+	while ( myAngle < myAngleReq ){
+
+			goLeft();
+			updateSensors();
+			delay(pulseTime);
+			clearMotors();
+			updateSensors();
+			rawSonarScan[i] = sonarValue;
+			i++;
+			}
+
+		clearMotors();
+		updateSensors();
+}
+
+
 
 
 #endif
