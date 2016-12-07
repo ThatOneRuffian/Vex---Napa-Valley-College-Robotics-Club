@@ -4,6 +4,8 @@
 //#define lineWidth 16    //not sure
 #include "autoFunctions.h"
 
+void mainMenu(void);
+
 bool backLight = false;  //default backlight setting
 bool isPressed = false;
 bool rightAlt = false; //disable right input button
@@ -14,7 +16,7 @@ const int menuMax[2] = {4,3};
 
 string myMenu[4][3] =
 	{{ "Mode",       "View Status",         "Settings"},
-	{"Auto",            "Battery1",         "LCD Light"},
+	{"Auto-SlamJam",            "Battery1",         "LCD Light"},
 	{"Manual",         "Battery2",        "Controller Alt"},
 	{"High Hang", 			    "empty", 				"Reset Sensors"}};
 
@@ -58,34 +60,40 @@ void determineAction(){
 */
 
 	if(menuChoice[0] == 1 && menuChoice[1] == 0){ // Auto selected
-
+		clearTimer(T1);
 		Mode = 1;
+		mainMenu();
+	}
+	if(menuChoice[0] == 2 && menuChoice[1] == 0){	//Manual mode selected
+		clearTimer(T1);
+		Mode = 0;
+		mainMenu();
+	}
+
+	if(menuChoice[0] == 3 && menuChoice[1] == 0){	//High hang mode selected
+		clearTimer(T1);
+		Mode = 2;
+		mainMenu();
 	}
 
 	if(menuChoice[0] == 1 && menuChoice[1] == 2){   //LCD light selected
 
-		if(	backLight){
+		if(	bLCDBacklight ){
 
 		bLCDBacklight = false;
+		mainMenu();
 
 		}
 
 		else{
 
 			bLCDBacklight = true;
+			mainMenu();
 
 			}
 		}
 
-	if(menuChoice[0] == 1 && menuChoice[1] == 1){	//Manual mode selected
 
-		Mode = 0;
-	}
-
-	if(menuChoice[0] == 1 && menuChoice[1] == 2){	//High hang mode selected
-
-		Mode = 3;
-	}
 
 
 }
@@ -104,12 +112,9 @@ void menuHandler(){
 		switch(userInputs){  //monitor user input
 
 		case 1:
-				if(menuChoice[0] > 0)	{
-				menuChoice[0] = 0;
-				menuChoice[1] = 0;
-			}
 
-			break;
+				mainMenu();
+				break;
 
 		case 2:
 
@@ -148,6 +153,11 @@ void menuHandler(){
 
 }
 
+void mainMenu(){ // directs interfect to main menu.
+	menuChoice[0] = 0;
+	menuChoice[1] = 0;
+	updateScreen();
+}
 void lcdHandler(){
 
 	updateInput();

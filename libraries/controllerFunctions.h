@@ -7,12 +7,13 @@
 void tossHandler(){ //control for launcher. Currently no feedback, so time limit implimented to stop motors from breaking.
 
 	if(HIGHTOSS){
-	tossObject(33);
+
+		activateArm(1);
 	}
 
-	else if(FARTOSS)
+  if(FARTOSS)
 	{
-		tossObject(38);
+		activateArm(0);
 	}
 
 	else
@@ -42,28 +43,24 @@ void clawHandler(){
 
 }
 
-	else if(CLAWOPEN)
+	if(CLAWOPEN)
 	{
 		openClaws();
 	}
 
-	else if(HANG){
+	if(HANG){
 
-		hangProceedure(45);
-	}
-
-	else if(LINE){
-
-		while(LINE){
-
-			go2Line();
-	}
+		//setHoldAngle(45);
 
 	}
-		else if(SCAN){
+
+	if(LINE){
+	setHoldAngle(0);
+
+	}
+  if(SCAN){
 		scanArea();
 	}
-
 
 }
 

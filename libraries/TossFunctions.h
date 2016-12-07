@@ -60,11 +60,11 @@ void activateArm(int DIR){
 
 		int MUL;
 
-		if(DIR == true){
+		if(DIR == 1){
 			MUL = 1;
 			}
 
-		else if(DIR == false){
+		else if(DIR == 0){
 			MUL = -1;
 			}
 
@@ -122,4 +122,7 @@ void tossObject(float releaseAngle){
         resetArm();
     }
 }
+
+
+
 #endif

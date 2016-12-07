@@ -4,14 +4,21 @@
 #include "sensors.h"
 #include "TossFunctions.h"
 
-bool lineStatus(void);
-
 void driveForward(void);
 void updateMotorVals(void);
 void clearMotors(void);
 void lockHandeler(void);
 void closeDistance(int dist);
 void scoopObject(void);
+void armHoldHandler();
+void scanArea(void);
+void parseData(void);
+void updateSensors(void);
+
+bool lineStatus(void);
+float getArclength(unsigned int radiusAvg, int angle1, int angle2);
+
+//=======================================================================
 
 const int autoSampleRate = 100;
 const int autoSpeed = 25;  //auto mode speed
@@ -31,15 +38,19 @@ const int depthTrigger = 127; // how deep something must be to trigger an edge d
 
 int parsedScanData[3][360]; //contains (theta1, theta2, radius, estimated object type)
 int rawSonarScan[360]; //contains full data from 360* scan
+
 int motorArray[2][2] = {{0, 0}, {0, false}}; // motorlogic {left | right}
 
-bool lockStatus = false;
+bool lockStatus = false; //default unlocked
 
 int Mode = 0;  //indicate manual | auto | high hang
 
 int threshold = 500; // Amount sensor has to change for the module to register
 
 int myAngle = 0; //angle offset from start
+
+float holdAngle = 45;
+//============================================================
 
 bool lineStatus(){
 
@@ -72,23 +83,18 @@ void go2Line(){//go forward until line is detected
 
 void lockHandeler(){
 
-	switch(lockStatus)
-	{
-	case true:
+if(lockStatus){
 		lockArm();
-		break;
-	case false:
+	}
+	else{
 		unlockArm();
-		break;
-	default:
-		break;
 	}
 }
 
 void goDist(float myDist){
 
 	const int wheelStuckMax = 3;
-	float degreeTotal = abs(myDist * mmPerRotation); // total degrees needed to make request
+	float degreeTotal = myDist * mmPerRotation; // total degrees needed to make request
 
 	int myProjectedClick[2] = { encoderArray[0] + degreeTotal, encoderArray[1] + degreeTotal}; //projected click count to achieve distance
 
@@ -120,6 +126,31 @@ void goDist(float myDist){
 				break; //break out of loop because wheel is stuck.
 			}
 	}
+	while( encoderArray[0] > myProjectedClick[0] ||  encoderArray[1] > myProjectedClick[1]){
+
+	  updateSensors();
+		wheelPosCheck[0][0] = encoderArray[0];
+		wheelPosCheck[0][1] = encoderArray[1];
+		driveForward();
+
+		delay(autoSampleRate);
+		updateSensors();
+		wheelPosCheck[1][0] = encoderArray[0];
+		wheelPosCheck[1][1] = encoderArray[1];
+
+		wheelPosCheck[2][0] = wheelPosCheck[0][0] - wheelPosCheck[1][0];
+		wheelPosCheck[2][1] = wheelPosCheck[0][1] - wheelPosCheck[1][1];
+
+		if(wheelPosCheck[2][0] == 0 || 	wheelPosCheck[2][1] == 0){
+
+			wheelStuckCount++;
+			}
+
+		if(wheelStuckCount > wheelStuckMax){
+				break; //break out of loop because wheel is stuck.
+			}
+	}
+
 	clearMotors();
 	updateSensors();
 }
@@ -140,8 +171,16 @@ void clearMotors(){
 		updateSensors();
 }
 
-void driveForward()
-{
+void driveBackwards(){
+
+	motorArray[0][0] = -1; //left front
+	motorArray[0][1] = -1; //left back
+	motorArray[1][0] = -1; //right back
+	motorArray[1][1] = -1; //right back
+	updateMotorVals();
+}
+
+void driveForward(){
 
 	motorArray[0][0] = 1; //left front
 	motorArray[0][1] = 1; //left back
@@ -149,7 +188,6 @@ void driveForward()
 	motorArray[1][1] = 1; //right back
 	updateMotorVals();
 }
-
 
 void goLeft(){
 
@@ -184,7 +222,7 @@ void lockProceedure(){
   	delay(250);
 		updateSensors();  //update lock status
 }
-
+/*
 void hangProceedure(float angle){
 
 		lockStatus = false; // unlock arm
@@ -239,7 +277,7 @@ void hangProceedure(float angle){
         }
     }
 }
-
+*/
 void turnToGivenAngle(int myAngleReq){
 
 	const int angleBuffer = 1; //turn buffer
@@ -317,13 +355,43 @@ void setupSensors(){
 	SensorValue[armPot] = 0;
 	SensorValue[leftEncoder] = 0;
 	SensorValue[rightEncoder] = 0;
+
+	SensorValue[l1] = 0;
+	SensorValue[l2] = 0;
+	SensorValue[l3] = 0;
+
+
 	//SensorValue[degree] = 0;
+}
+void armHoldHandler(){
+	float holdingAngle = holdAngle;
+
+	holdingAngle /= 0.045; // convert angle to sensor value
+
+	if(potValue < (int)holdingAngle)
+	{
+		activateArm(1); //turn on
+	}
+	else{
+		activateArm(-1); //turn off
+	}
+}
+void setHoldAngle(float myAngle)
+{
+	holdAngle=myAngle;
+	if(myAngle == 0)
+	{
+		clearMotors();
+		updateSensors();
+	}
+		else
+			updateSensors();
 }
 
 void updateSensors(){
 
 	lockHandeler();
-
+	armHoldHandler();
 	lineArray[0] = SensorValue[l1];
 	lineArray[1] = SensorValue[l2];
 	lineArray[2] = SensorValue[l3];
@@ -334,6 +402,7 @@ void updateSensors(){
 	sonarValue = SensorValue[ultraSonic];
 
 	potValue = SensorValue[armPot];
+
 	//myAngle = SensorValue[degree];
 }
 
@@ -372,6 +441,54 @@ void scanArea(){
 		updateSensors();
 }
 
+
+	int getLineAvg(){//returns true if a line is detected
+
+	int myAvg = 0;
+
+	updateSensors();
+
+	for(int i = 0; i < (sizeof(lineArray)/sizeof(int)); i++){
+
+		myAvg += lineArray[i];
+	}
+
+	 myAvg /= sizeof(lineArray)/sizeof(int);
+
+	 return myAvg;
+}
+
+
+void followLine(){
+
+		//myLineLevels[2] = threshold
+
+    // RIGHT sensor sees dark:
+		int threshold = 1;
+
+		//how long should this nonsense continue?
+
+		updateSensors();
+
+
+    if(lineArray[2] > threshold)
+    {
+      // counter-steer right:
+      goRight();
+    }
+    // CENTER sensor sees dark:
+    if(lineArray[1] > threshold)
+    {
+      // go straight
+     driveForward();
+    }
+    // LEFT sensor sees dark:
+    if(lineArray[0] > threshold)
+    {
+      // counter-steer left:
+     goLeft();
+    }
+  }
 
 
 
