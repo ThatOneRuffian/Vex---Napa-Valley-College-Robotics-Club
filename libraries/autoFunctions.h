@@ -15,7 +15,7 @@ void scanArea(void);
 void parseData(void);
 void updateSensors(void);
 
-bool lineStatus(void);
+
 float getArclength(unsigned int radiusAvg, int angle1, int angle2);
 
 //=======================================================================
@@ -42,7 +42,7 @@ int rawSonarScan[360]; //contains full data from 360* scan
 int motorArray[2][2] = {{0, 0}, {0, false}}; // motorlogic {left | right}
 
 bool lockStatus = false; //default unlocked
-
+bool leftPad = false;
 int Mode = 0;  //indicate manual | auto | high hang
 
 int threshold = 500; // Amount sensor has to change for the module to register
@@ -52,26 +52,26 @@ int myAngle = 0; //angle offset from start
 float holdAngle = 45;
 //============================================================
 
-bool lineStatus(){
 
-	//const int threshold = 500; // Amount sensor has to change for the module to register
+bool lineDetected(){
 
-	lineAvg[1] = getLineAvg();
+const int myBuffer = 200;
+		updateSensors();
 
-	if( abs( lineAvg[0] - lineAvg[1] ) > threshold ) { // if the difference between the startup calibration & read by threshold
+		if( lineArray[1] > lineThreshold[1] - 200 && leftPad){
 
-	return true;
-	}
+			return true;
+		}
 
-	else{
+		else{
 
-		return false;
-	}
+			return false;
+		}
 }
 
 void go2Line(){//go forward until line is detected
 
-	while(!lineStatus())
+	while(!lineDetected())
 	{
 
 	driveForward();  //need break statement
@@ -303,12 +303,13 @@ void turnToGivenAngle(int myAngleReq){
 
 
 void scoopObject(){ //close in on object and turn towards gate
+
 	const int startingAngle = 0;
 	const int myScoopDistance = 0;
 
 	closeDistance(myScoopDistance);
 	turnToGivenAngle(startingAngle);
-
+	goDist(2000);
 }
 
 void closeDistance(int dist){ //move the object in question into the sweet spot of the grabbing device
@@ -349,7 +350,9 @@ void closeDistance(int dist){ //move the object in question into the sweet spot 
 void setupSensors(){
 
 	delay(100);
-	lineAvg[0] = getLineAvg();  		//calibrate line sensor array on boot
+	const int sampleSize = 3;
+	int myDataBuffer = 0;
+
 	lockHandeler(); 								//default unlocked
 	openClaws(); 										// open for deafult state
 	SensorValue[armPot] = 0;
@@ -360,9 +363,22 @@ void setupSensors(){
 	SensorValue[l2] = 0;
 	SensorValue[l3] = 0;
 
+	lineArray[0] = SensorValue[l1];
+	lineArray[1] = SensorValue[l2];
+	lineArray[2] = SensorValue[l3]; //just incase values cannot be cleared like it states.
 
-	//SensorValue[degree] = 0;
+
+	for(int i = 0; i < sampleSize; i++){
+
+		myDataBuffer += SensorValue[l2];
 }
+ myDataBuffer /= sampleSize;
+
+ lineThreshold[0] = myDataBuffer;
+
+ //SensorValue[degree] = 0;
+}
+
 void armHoldHandler(){
 	float holdingAngle = holdAngle;
 
@@ -376,6 +392,7 @@ void armHoldHandler(){
 		activateArm(-1); //turn off
 	}
 }
+
 void setHoldAngle(float myAngle)
 {
 	holdAngle=myAngle;
@@ -389,7 +406,7 @@ void setHoldAngle(float myAngle)
 }
 
 void updateSensors(){
-
+	lineHandler();
 	lockHandeler();
 	armHoldHandler();
 	lineArray[0] = SensorValue[l1];
@@ -413,7 +430,6 @@ float getArclength(unsigned int radiusAvg, int angle1, int angle2){
 }
 
 void parseData(){
-
 
 }
 
@@ -441,12 +457,13 @@ void scanArea(){
 		updateSensors();
 }
 
-
-	int getLineAvg(){//returns true if a line is detected
+int getLineAvg(){//returns true if a line is detected
 
 	int myAvg = 0;
 
-	updateSensors();
+	lineArray[0] = SensorValue[l1];
+	lineArray[1] = SensorValue[l2];
+	lineArray[2] = SensorValue[l3];
 
 	for(int i = 0; i < (sizeof(lineArray)/sizeof(int)); i++){
 
@@ -457,8 +474,33 @@ void scanArea(){
 
 	 return myAvg;
 }
+void checkPad(){
+
+	const int myBuffer = 100; // darker
+
+	lineArray[1] = SensorValue[l2];
 
 
+	if (lineArray[1] > lineThreshold[0] + myBuffer && lineThreshold != 0 ){
+
+		leftPad = true;
+		lineThreshold[1] = lineArray[1];
+	}
+
+	else{
+		leftPad = false;
+		}
+
+}
+void lineHandler(){
+
+
+	checkPad(); //set flag to indicate that second line threshold as been set and ready to look for lines.
+
+
+
+
+}
 void followLine(){
 
 		//myLineLevels[2] = threshold
@@ -489,7 +531,5 @@ void followLine(){
      goLeft();
     }
   }
-
-
 
 #endif

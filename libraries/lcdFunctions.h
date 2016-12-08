@@ -1,14 +1,16 @@
 #ifndef	_LCD
 #define _LCD
 
-//#define lineWidth 16    //not sure
 #include "autoFunctions.h"
+#include "modeLogic.h"
 
 void mainMenu(void);
+void lcdHandler(void);
 
-bool backLight = false;  //default backlight setting
+bool backLight = true;  //default backlight setting
 bool isPressed = false;
 bool rightAlt = false; //disable right input button
+bool AUTORUN = true;
 
 int menuChoice[2] = {0, 0};
 int userInputs	= 0;
@@ -51,6 +53,7 @@ void updateScreen(){
 
 displayLCDCenteredString (1,"Back Select --->");
 }
+
 void determineAction(){
 
 /*	{{ "Mode",       "View Status",         "Settings"},
@@ -63,17 +66,20 @@ void determineAction(){
 		clearTimer(T1);
 		Mode = 1;
 		mainMenu();
+		AUTORUN = true;
 	}
 	if(menuChoice[0] == 2 && menuChoice[1] == 0){	//Manual mode selected
 		clearTimer(T1);
 		Mode = 0;
 		mainMenu();
+		AUTORUN = true;
 	}
 
 	if(menuChoice[0] == 3 && menuChoice[1] == 0){	//High hang mode selected
 		clearTimer(T1);
 		Mode = 2;
 		mainMenu();
+		AUTORUN = true;
 	}
 
 	if(menuChoice[0] == 1 && menuChoice[1] == 2){   //LCD light selected
@@ -158,13 +164,13 @@ void mainMenu(){ // directs interfect to main menu.
 	menuChoice[1] = 0;
 	updateScreen();
 }
+
 void lcdHandler(){
 
 	updateInput();
 	menuHandler();
 	updateScreen();
 }
-
 
 
 /*  clearLCDLine(0);                      // Clear line 1 (0) of the LCD

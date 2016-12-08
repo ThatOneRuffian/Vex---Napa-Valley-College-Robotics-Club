@@ -21,28 +21,16 @@
 #pragma config(Motor,  port10,          LauncherR6,    tmotorVex393_HBridge, openLoop)
 /***************^^^^^^^^^^^^^^ PIN DECLARATIONS AND THEIR FUNCTIONS ^^^^^^^^^^^^^^*********************/
 #include "controllerFunctions.h"
-#include "lcdFunctions.h"
 #include "autoFunctions.h"
 #include "macroDefines.h"
 #include "modeLogic.h"
 
-const int gameTime = 5; //48 seconds
-
 task main()
 {
+
 	intScreen(); //setup screen
 	setupSensors(); // zero out sensors
-	clearTimer(T1);
-	//timer1[T1];
 
-	while( time10[T1] < gameTime ){//5s
-
-		openClaws();
-		delay(1000);
-		closeClaws();
-		delay(1000);
-}
-/*
 	while(true){
 
 		while(Mode == 0){ // manual mode
@@ -59,5 +47,5 @@ task main()
 			highHangMode();
 		}
 	}
-	*/
+
 }

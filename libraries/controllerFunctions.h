@@ -8,7 +8,14 @@ void tossHandler(){ //control for launcher. Currently no feedback, so time limit
 
 	if(HIGHTOSS){
 
-		activateArm(1);
+				int motorSpeed = 200;
+
+		setMotor(LauncherL1, motorSpeed);
+		setMotor(LauncherL2, motorSpeed);
+		setMotor(LauncherL3, motorSpeed);
+		setMotor(LauncherR4, motorSpeed);
+		setMotor(LauncherR5, motorSpeed);
+		setMotor(LauncherR6, motorSpeed);
 	}
 
   if(FARTOSS)
@@ -16,7 +23,7 @@ void tossHandler(){ //control for launcher. Currently no feedback, so time limit
 		activateArm(0);
 	}
 
-	else
+	if(!FARTOSS && !HIGHTOSS)
 	{
 	 	activateArm(-1);
 	}

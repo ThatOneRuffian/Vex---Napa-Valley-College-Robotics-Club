@@ -2,7 +2,7 @@
 #define _SENSE
 
 int lineArray[3] = {0,0,0}; //left center right
-int lineValues[3] = {0, 0, 0};
+int lineThreshold[3] = {0, 0, 0};
 int encoderArray[2] = {0,0};
 int sonarValue = 0;
 int potValue = 0;

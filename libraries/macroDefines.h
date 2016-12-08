@@ -3,7 +3,7 @@
 
 //*************Controller Macros - Start*****************//
 #define THROTTLE    vexRT[Ch3]
-#define TURN        vexRT[Ch1]
+#define TURN        vexRT[Ch4]
 #define CLAWCLOSE   vexRT[Btn8D]
 #define CLAWOPEN    vexRT[Btn8R]
 #define HIGHTOSS    vexRT[Btn6U]
