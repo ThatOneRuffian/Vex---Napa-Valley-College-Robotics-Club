@@ -14,13 +14,13 @@ void armHoldHandler();
 void scanArea(void);
 void parseData(void);
 void updateSensors(void);
-
-
+void lineHandler(void);
+void goLeft(void);
 float getArclength(unsigned int radiusAvg, int angle1, int angle2);
 
 //=======================================================================
 
-const int autoSampleRate = 100;
+const int autoSampleRate = 200;
 const int autoSpeed = 25;  //auto mode speed
 
 const float armLength = 431; //mm
@@ -80,6 +80,15 @@ void go2Line(){//go forward until line is detected
 	clearMotors();
 	updateSensors();
 }
+void turn45CCW(){
+
+		const int myTurnTime = 1500;
+
+	goLeft();
+	delay(myTurnTime);
+	clearMotors();
+	updateMotorVals();
+}
 
 void lockHandeler(){
 
@@ -91,10 +100,15 @@ if(lockStatus){
 	}
 }
 
+
 void goDist(float myDist){
 
 	const int wheelStuckMax = 3;
-	float degreeTotal = myDist * mmPerRotation; // total degrees needed to make request
+	float degreeTotal = abs(myDist * mmPerRotation); // total degrees needed to make request
+  SensorValue[leftEncoder] =0;
+  SensorValue[rightEncoder] =0;
+	encoderArray[0] = SensorValue[leftEncoder];
+	encoderArray[1] = SensorValue[rightEncoder];
 
 	int myProjectedClick[2] = { encoderArray[0] + degreeTotal, encoderArray[1] + degreeTotal}; //projected click count to achieve distance
 
@@ -104,13 +118,18 @@ void goDist(float myDist){
 
 	while( encoderArray[0] < myProjectedClick[0] ||  encoderArray[1] < myProjectedClick[1]){
 
-	  updateSensors();
+	  encoderArray[0] = SensorValue[leftEncoder];
+		encoderArray[1] = SensorValue[rightEncoder];
+
 		wheelPosCheck[0][0] = encoderArray[0];
 		wheelPosCheck[0][1] = encoderArray[1];
 		driveForward();
 
 		delay(autoSampleRate);
-		updateSensors();
+
+		encoderArray[0] = SensorValue[leftEncoder];
+		encoderArray[1] = SensorValue[rightEncoder];
+
 		wheelPosCheck[1][0] = encoderArray[0];
 		wheelPosCheck[1][1] = encoderArray[1];
 
@@ -126,33 +145,9 @@ void goDist(float myDist){
 				break; //break out of loop because wheel is stuck.
 			}
 	}
-	while( encoderArray[0] > myProjectedClick[0] ||  encoderArray[1] > myProjectedClick[1]){
-
-	  updateSensors();
-		wheelPosCheck[0][0] = encoderArray[0];
-		wheelPosCheck[0][1] = encoderArray[1];
-		driveForward();
-
-		delay(autoSampleRate);
-		updateSensors();
-		wheelPosCheck[1][0] = encoderArray[0];
-		wheelPosCheck[1][1] = encoderArray[1];
-
-		wheelPosCheck[2][0] = wheelPosCheck[0][0] - wheelPosCheck[1][0];
-		wheelPosCheck[2][1] = wheelPosCheck[0][1] - wheelPosCheck[1][1];
-
-		if(wheelPosCheck[2][0] == 0 || 	wheelPosCheck[2][1] == 0){
-
-			wheelStuckCount++;
-			}
-
-		if(wheelStuckCount > wheelStuckMax){
-				break; //break out of loop because wheel is stuck.
-			}
-	}
-
 	clearMotors();
-	updateSensors();
+	encoderArray[0] = SensorValue[leftEncoder];
+	encoderArray[1] = SensorValue[rightEncoder];
 }
 
 void updateMotorVals(){
@@ -164,6 +159,7 @@ void updateMotorVals(){
 }
 
 void clearMotors(){
+
 		motorArray[0][0] = 0; //left front
 		motorArray[0][1] = 0; //left back
 		motorArray[1][0] = 0; //right back
@@ -310,6 +306,25 @@ void scoopObject(){ //close in on object and turn towards gate
 	closeDistance(myScoopDistance);
 	turnToGivenAngle(startingAngle);
 	goDist(2000);
+}
+
+void turn90CCW(){
+
+		const int myTurnTime = 3000;
+
+	goLeft();
+	delay(myTurnTime);
+	clearMotors();
+	updateMotorVals();
+}
+
+void turn90CW(){
+	const int myTurnTime = 3000;
+
+	goRight();
+	delay(myTurnTime);
+	clearMotors();
+	updateMotorVals();
 }
 
 void closeDistance(int dist){ //move the object in question into the sweet spot of the grabbing device

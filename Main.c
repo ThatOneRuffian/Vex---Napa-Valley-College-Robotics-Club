@@ -28,7 +28,7 @@
 task main()
 {
 
-	intScreen(); //setup screen
+intScreen(); //setup screen
 	setupSensors(); // zero out sensors
 
 	while(true){
@@ -47,5 +47,4 @@ task main()
 			highHangMode();
 		}
 	}
-
 }

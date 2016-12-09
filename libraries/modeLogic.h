@@ -12,42 +12,44 @@ void highHangMode(){
 
 		clearTimer(T4);
 		while( time10[T4] < gameTime){
-		lcdHandler();
-		AUTORUN = false;
+			lcdHandler();
+			AUTORUN = false;
 		}
 	}
 }
 
 void autoMode(){//slam jam!
+	lcdHandler();
+  lockStatus = true;
+  lockHandeler();
+  delay(1000);
 
-  if(AUTORUN){
+	if(AUTORUN){
 
-	  clearTimer(T4);
+		clearTimer(T4);
 
 		while( time10[T4] < gameTime){
 
 			int delayTime = 1000;
-			int distance = 500;
+			float distance = 750;
 
 			openClaws();
 
 			delay(delayTime);
 
 			//pickup objects
+
 			goDist(distance);
+
+
 			closeClaws();
 
-			//move to clear wall
-			turnToGivenAngle(-90);
-			goDist(distance/2);
+			turn45CCW();
+			goDist(distance);
 
-			//turn around and dunk
-			turnToGivenAngle(90);
-			goDist(distance*-3);
-			activateArm(1);
-			delay(2000);
+			delay(20000);
 
-			lcdHandler();
+
 			AUTORUN = false;
 		}
 	}
@@ -55,8 +57,8 @@ void autoMode(){//slam jam!
 
 void manualMode(){
 
-		lcdHandler();
-		controllerHandeler();
-	}
+	lcdHandler();
+	controllerHandeler();
+}
 
 #endif
