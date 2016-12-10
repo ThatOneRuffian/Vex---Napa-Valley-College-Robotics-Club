@@ -28,9 +28,37 @@ void autoMode(){//slam jam!
 
 		clearTimer(T4);
 
+			while( time10[T4] < gameTime){
+
+				const int delayTime = 250;
+				const float distance0 = 250;
+				const float distance1 = 750;
+				const float distance2 = 1000;
+
+				openClaws();
+
+				delay(delayTime);
+
+				//pickup objects
+
+				goDist(distance1);
+
+				closeClaws();
+
+				turn45CW();
+
+				goDist(distance1);
+
+				delay(20000);
+
+				AUTORUN = false;
+		}
+	}
+}
+/* push stuff under the fence
 		while( time10[T4] < gameTime){
 
-			int delayTime = 1000;
+			int delayTime = 250;
 			float distance = 750;
 
 			openClaws();
@@ -41,19 +69,19 @@ void autoMode(){//slam jam!
 
 			goDist(distance);
 
-
 			closeClaws();
 
 			turn45CCW();
+
 			goDist(distance);
 
 			delay(20000);
 
-
 			AUTORUN = false;
 		}
+
 	}
-}
+}*/
 
 void manualMode(){
 

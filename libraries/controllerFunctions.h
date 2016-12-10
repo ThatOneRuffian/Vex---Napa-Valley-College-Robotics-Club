@@ -28,8 +28,14 @@ void tossHandler(){ //control for launcher. Currently no feedback, so time limit
 	 	activateArm(-1);
 	}
 
-}
+	if(LOCK){
+		lockArm();
+	}
 
+	if(UNLOCK){
+			unlockArm();
+	}
+}
 void clawHandler(){
 
 
@@ -38,37 +44,10 @@ void clawHandler(){
 	closeClaws();
 	}
 
-	else if(debug1){
-
-	lockArm();
-
-}
-
-	else if(debug2){
-
-	unlockArm();
-
-}
-
 	if(CLAWOPEN)
 	{
 		openClaws();
 	}
-
-	if(HANG){
-
-		//setHoldAngle(45);
-
-	}
-
-	if(LINE){
-	setHoldAngle(0);
-
-	}
-  if(SCAN){
-		scanArea();
-	}
-
 }
 
 void drive(){  //Handles Joystick -> movement\translation

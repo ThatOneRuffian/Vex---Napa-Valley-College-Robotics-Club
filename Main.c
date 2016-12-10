@@ -30,7 +30,9 @@ task main()
 
 intScreen(); //setup screen
 	setupSensors(); // zero out sensors
-
+	turn90CCW();
+ //			autoMode();
+/*
 	while(true){
 
 		while(Mode == 0){ // manual mode
@@ -46,5 +48,5 @@ intScreen(); //setup screen
 
 			highHangMode();
 		}
-	}
+	}*/
 }

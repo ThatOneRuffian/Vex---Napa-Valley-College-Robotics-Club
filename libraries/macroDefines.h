@@ -4,12 +4,12 @@
 //*************Controller Macros - Start*****************//
 #define THROTTLE    vexRT[Ch3]
 #define TURN        vexRT[Ch4]
-#define CLAWCLOSE   vexRT[Btn8D]
-#define CLAWOPEN    vexRT[Btn8R]
-#define HIGHTOSS    vexRT[Btn6U]
-#define FARTOSS  	   vexRT[Btn6D]
-#define debug1				vexRT[Btn7U]  //test arm lock
-#define debug2				vexRT[Btn7D]	// test arm lock ^
+#define CLAWCLOSE   vexRT[Btn6D]
+#define CLAWOPEN    vexRT[Btn6U]
+#define HIGHTOSS    vexRT[Btn5D]
+#define FARTOSS  	   vexRT[Btn5U]
+#define LOCK				vexRT[Btn7U]  //test arm lock
+#define UNLOCK				vexRT[Btn7D]	// test arm lock ^
 #define HANG					vexRT[Btn7L]	//high hand strength test
 #define LINE					vexRT[Btn7R] 	//test for line movement
 #define SCAN					vexRT[Btn5U]  //scan for baddies

@@ -16,6 +16,9 @@ void parseData(void);
 void updateSensors(void);
 void lineHandler(void);
 void goLeft(void);
+void turn45CW(void);
+
+
 float getArclength(unsigned int radiusAvg, int angle1, int angle2);
 
 //=======================================================================
@@ -80,6 +83,17 @@ void go2Line(){//go forward until line is detected
 	clearMotors();
 	updateSensors();
 }
+
+void turn45CW(){
+
+		const int myTurnTime = 1500;
+
+	goLeft();
+	delay(myTurnTime);
+	clearMotors();
+	updateMotorVals();
+}
+
 void turn45CCW(){
 
 		const int myTurnTime = 1500;
@@ -100,13 +114,14 @@ if(lockStatus){
 	}
 }
 
-
 void goDist(float myDist){
 
 	const int wheelStuckMax = 3;
 	float degreeTotal = abs(myDist * mmPerRotation); // total degrees needed to make request
+
   SensorValue[leftEncoder] =0;
   SensorValue[rightEncoder] =0;
+
 	encoderArray[0] = SensorValue[leftEncoder];
 	encoderArray[1] = SensorValue[rightEncoder];
 
@@ -116,7 +131,7 @@ void goDist(float myDist){
 
 	int wheelStuckCount = 0;
 
-	while( encoderArray[0] < myProjectedClick[0] ||  encoderArray[1] < myProjectedClick[1]){
+ 	while( encoderArray[0] < myProjectedClick[0] ||  encoderArray[1] < myProjectedClick[1]){
 
 	  encoderArray[0] = SensorValue[leftEncoder];
 		encoderArray[1] = SensorValue[rightEncoder];
@@ -164,7 +179,7 @@ void clearMotors(){
 		motorArray[0][1] = 0; //left back
 		motorArray[1][0] = 0; //right back
 		motorArray[1][1] = 0; //right back
-		updateSensors();
+		updateMotorVals();
 }
 
 void driveBackwards(){
@@ -310,7 +325,7 @@ void scoopObject(){ //close in on object and turn towards gate
 
 void turn90CCW(){
 
-		const int myTurnTime = 3000;
+	const int myTurnTime = 3000;
 
 	goLeft();
 	delay(myTurnTime);
